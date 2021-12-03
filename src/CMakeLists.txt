@@ -43,20 +43,10 @@ target_include_directories(mbd
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-if(DEFINED MKL_LIBRARIES)
-    target_link_libraries(mbd PRIVATE ${MKL_LIBRARIES})
-else()
-    target_link_libraries(mbd PRIVATE ${LAPACK_LINKER_FLAGS} ${LAPACK_LIBRARIES})
-endif()
+target_link_libraries(mbd PRIVATE LAPACK::LAPACK)
 
 if(ENABLE_SCALAPACK_MPI)
-    target_link_libraries(mbd PRIVATE ${MPI_Fortran_LINK_FLAGS} ${MPI_Fortran_LIBRARIES})
-    target_include_directories(mbd PRIVATE ${MPI_Fortran_INCLUDE_PATH})
-    if(DEFINED SCALAPACK_LIBRARIES)
-        target_link_libraries(mbd PRIVATE ${SCALAPACK_LIBRARIES})
-    elseif(NOT MKL_LIBRARIES)
-        target_link_libraries(mbd PRIVATE scalapack)
-    endif()
+    target_link_libraries(mbd PRIVATE MPI::MPI_Fortran scalapack)
     set_property(TARGET mbd APPEND PROPERTY COMPILE_DEFINITIONS WITH_MPI WITH_SCALAPACK)
 endif()
 
